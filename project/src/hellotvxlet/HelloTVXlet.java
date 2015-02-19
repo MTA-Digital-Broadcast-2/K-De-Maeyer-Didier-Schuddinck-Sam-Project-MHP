@@ -18,7 +18,8 @@ public class HelloTVXlet implements Xlet, HActionListener {
     //debuggen activeren of niet?
     private boolean debug = true;
     
-    private HStaticText logoText;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime;
+    
     private Sprite logo, logoSmall;
     private int logoX = 100, 
                 logoY = 50,
@@ -74,9 +75,6 @@ public class HelloTVXlet implements Xlet, HActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        //System.out.println(e.getActionCommand());
-        
-        
         if( e.getActionCommand() == "btnPlayNewGame_pressed" ) 
         { 
             //laat het spelscherm zien en start het spel
@@ -162,6 +160,24 @@ public class HelloTVXlet implements Xlet, HActionListener {
         //Remove all components from scene
         scene.removeAll();
         
+        
+        txtRound = new HStaticText("Ronde 1");
+        txtRound.setLocation(200, 50);
+        txtRound.setSize(300, 50);
+        txtRound.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtRound);
+        
+        txtQuestionNumber = new HStaticText("Vraag 1");
+        txtQuestionNumber.setLocation(200, 100);
+        txtQuestionNumber.setSize(300, 50);
+        txtQuestionNumber.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtQuestionNumber);
+        
+        txtQuestion = new HStaticText("Wat weet u over Barack Obama?"); // er kunnen 40 karakters op 1 lijn
+        txtQuestion.setLocation(50, 150);
+        txtQuestion.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
+        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 30));
+        scene.add(txtQuestion);
         
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
