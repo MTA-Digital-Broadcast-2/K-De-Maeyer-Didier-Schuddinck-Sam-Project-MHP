@@ -1,31 +1,35 @@
 package hellotvxlet;
 
-import javax.tv.xlet.*;
-import org.dvb.ui.*;
-import java.awt.*;
 
+import java.awt.Font;
 import java.awt.event.*;
 import java.util.Timer;
-import org.bluray.ui.event.*;
-import org.dvb.event.*;
+import javax.tv.xlet.*;
+import org.dvb.event.EventManager;
+import org.dvb.event.UserEvent;
+import org.dvb.event.UserEventListener;
+import org.dvb.event.UserEventRepository;
+import org.dvb.ui.DVBColor;
 import org.havi.ui.*;
 import org.havi.ui.event.*;
+import org.havi.ui.event.*;
 
-public class HelloTVXlet implements Xlet, HActionListener {
+public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
     private XletContext actueleContext;
     private HScene scene;
     //debuggen activeren of niet?
     private boolean debug = true;
-    
-    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime;
-    
+    private boolean checkInput = false;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer;
     private Sprite logo, logoSmall;
     private int logoX = 100, 
                 logoY = 50,
                 logoSmallX = 20,
                 logoSmallY = 20;
     
+    private String userAnswer = ""; //Variabele om antwoord in bij te houden
+    private String [] currentQ = {};
     private String[][] openVragen = {
         {"Welke vloeistof gebruik je zeker als je stoofvlees wilt maken","bier"},
         {"welke nationaliteit hebben de meeste mensen die op Corsica wonen ?","Frans"},
@@ -67,13 +71,47 @@ public class HelloTVXlet implements Xlet, HActionListener {
         showHomescreen();
     }
 
-    public void startXlet() throws XletStateChangeException {
-        if(debug) System.out.println("Xlet starten");
-        
-        
-        
-        
+    public void startXlet() {
+        if(debug) System.out.println("Xlet Starten");
         //Scene zichtbaar maken
+        
+        //Eventmanager aanvragen
+        EventManager manager = EventManager.getInstance();
+        //Repos
+        UserEventRepository repository = new UserEventRepository("Voorbeeld");
+        // Events toevoegen
+        repository.addKey(HRcEvent.VK_A);
+        repository.addKey(HRcEvent.VK_B);
+        repository.addKey(HRcEvent.VK_C);
+        repository.addKey(HRcEvent.VK_D);
+        repository.addKey(HRcEvent.VK_E);
+        repository.addKey(HRcEvent.VK_F);
+        repository.addKey(HRcEvent.VK_G);
+        repository.addKey(HRcEvent.VK_H);
+        repository.addKey(HRcEvent.VK_I);
+        repository.addKey(HRcEvent.VK_J);
+        repository.addKey(HRcEvent.VK_K);
+        repository.addKey(HRcEvent.VK_L);
+        repository.addKey(HRcEvent.VK_M);
+        repository.addKey(HRcEvent.VK_N);
+        repository.addKey(HRcEvent.VK_O);
+        repository.addKey(HRcEvent.VK_P);
+        repository.addKey(HRcEvent.VK_Q);
+        repository.addKey(HRcEvent.VK_R);
+        repository.addKey(HRcEvent.VK_S);
+        repository.addKey(HRcEvent.VK_T);
+        repository.addKey(HRcEvent.VK_U);
+        repository.addKey(HRcEvent.VK_V);
+        repository.addKey(HRcEvent.VK_W);
+        repository.addKey(HRcEvent.VK_X);
+        repository.addKey(HRcEvent.VK_Y);
+        repository.addKey(HRcEvent.VK_Z);
+        repository.addKey(HRcEvent.VK_SPACE);
+        repository.addKey(HRcEvent.VK_ENTER);
+        repository.addKey(HRcEvent.VK_BACK_SPACE);
+        //Bekend maken bij Event Manager
+        manager.addUserEventListener(this, repository);
+        
         scene.validate();
         scene.setVisible(true);
     }
@@ -185,11 +223,22 @@ public class HelloTVXlet implements Xlet, HActionListener {
         txtQuestionNumber.setFont(new Font("sans-serif", Font.PLAIN, 25));
         scene.add(txtQuestionNumber);
         
-        txtQuestion = new HStaticText("Wat weet u over Barack Obama?"); // er kunnen 40 karakters op 1 lijn
+        int randomQ = (int) (Math.random() * openVragen.length);
+        txtQuestion = new HStaticText(openVragen[randomQ][0]); // er kunnen 40 karakters op 1 lijn
+        currentQ = openVragen[randomQ];
         txtQuestion.setLocation(50, 150);
         txtQuestion.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
-        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 30));
+        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 20));
         scene.add(txtQuestion);
+        
+        txtAnswer = new HStaticText(" "); // er kunnen 40 karakters op 1 lijn
+        txtAnswer.setLocation(50, 200);
+        txtAnswer.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
+        txtAnswer.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtAnswer);
+        
+        checkInput = true;
+
         
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
@@ -200,6 +249,152 @@ public class HelloTVXlet implements Xlet, HActionListener {
         scene.pushToBack(background);
         
         scene.repaint();
+    }
+    public void checkAnswer()
+    {
+        if(this.currentQ[1].toLowerCase().equals(userAnswer.toLowerCase()))
+        {
+            System.out.println("Goed!!");
+        }
+        else
+        {
+            System.out.println("Fout!");
+        }
+        
+    }
+     public void userEventReceived(UserEvent e) {
+        if(checkInput)
+        {
+            if(e.getType() == KeyEvent.KEY_PRESSED)
+            {
+                switch(e.getCode())
+                {
+                    case HRcEvent.VK_A:
+                        System.out.println("A");
+                        userAnswer += "A";
+                        break;
+                    case HRcEvent.VK_B:
+                        System.out.println("B");
+                        userAnswer += "B";
+                        break;
+                    case HRcEvent.VK_C:
+                        System.out.println("C");
+                        userAnswer += "C";
+                        break;
+                    case HRcEvent.VK_D:
+                        System.out.println("D");
+                        userAnswer += "D";
+                        break;
+                    case HRcEvent.VK_E:
+                        System.out.println("E");
+                        userAnswer += "E";
+                        break;
+                    case HRcEvent.VK_F:
+                        System.out.println("F");
+                        userAnswer += "F";
+                        break;
+                    case HRcEvent.VK_G:
+                        System.out.println("G");
+                        userAnswer += "G";
+                        break;
+                    case HRcEvent.VK_H:
+                        System.out.println("H");
+                        userAnswer += "H";
+                        break;
+                    case HRcEvent.VK_I:
+                        System.out.println("I");
+                        userAnswer += "I";
+                        break;
+                    case HRcEvent.VK_J:
+                        System.out.println("J");
+                        userAnswer += "J";
+                        break;
+                    case HRcEvent.VK_K:
+                        System.out.println("K");
+                        userAnswer += "K";
+                        break;
+                    case HRcEvent.VK_L:
+                        System.out.println("L");
+                        userAnswer += "L";
+                        break;
+                    case HRcEvent.VK_M:
+                        System.out.println("M");
+                        userAnswer += "M";
+                        break;
+                    case HRcEvent.VK_N:
+                        System.out.println("N");
+                        userAnswer += "N";
+                        break;
+                    case HRcEvent.VK_O:
+                        System.out.println("O");
+                        userAnswer += "O";
+                        break;
+                    case HRcEvent.VK_P:
+                        System.out.println("P");
+                        userAnswer += "P";
+                        break;
+                    case HRcEvent.VK_Q:
+                        System.out.println("Q");
+                        userAnswer += "Q";
+                        break;
+                    case HRcEvent.VK_R:
+                        System.out.println("R");
+                        userAnswer += "R";
+                        break;
+                    case HRcEvent.VK_S:
+                        System.out.println("S");
+                        userAnswer += "S";
+                        break;
+                    case HRcEvent.VK_T:
+                        System.out.println("T");
+                        userAnswer += "T";
+                        break;
+                    case HRcEvent.VK_U:
+                        System.out.println("U");
+                        userAnswer += "U";
+                        break;
+                    case HRcEvent.VK_V:
+                        System.out.println("V");
+                        userAnswer += "V";
+                        break;
+                    case HRcEvent.VK_W:
+                        System.out.println("W");
+                        userAnswer += "W";
+                        break;
+                    case HRcEvent.VK_X:
+                        System.out.println("X");
+                        userAnswer += "X";
+                        break;
+                    case HRcEvent.VK_Y:
+                        System.out.println("Y");
+                        userAnswer += "Y";
+                        break;
+                    case HRcEvent.VK_Z:
+                        System.out.println("Z");
+                        userAnswer += "Y";
+                        break;
+                    case HRcEvent.VK_SPACE:
+                        System.out.println(" ");
+                        userAnswer += " ";
+                        break;
+                    case HRcEvent.VK_ENTER:
+                        this.checkAnswer();
+                        break;
+                    case HRcEvent.VK_BACK_SPACE:
+                        if(userAnswer.length() > 0)
+                        {
+                            userAnswer = userAnswer.substring(0, userAnswer.length() -1);
+                        }
+                        break;
+
+                }
+            }
+            
+        }
+        System.out.println(userAnswer);
+        txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
+        scene.repaint();
+        
     }
 
 }
