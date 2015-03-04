@@ -26,6 +26,18 @@ public class HelloTVXlet implements Xlet, HActionListener {
                 logoSmallX = 20,
                 logoSmallY = 20;
     
+    private String[][] openVragen = {
+        {"Welke vloeistof gebruik je zeker als je stoofvlees wilt maken","bier"},
+        {"welke nationaliteit hebben de meeste mensen die op Corsica wonen ?","Frans"},
+        {"In welke Waalse provincie ligt de dierentuin van Pairi Daiza?", "Henegouwen"},
+        {"Welk land van de Europese Unie(EU) heeft de grootste oppervlakte?","Frankrijk"},
+        {"Welke vogel zit verborgen in het woord 'burgemeestersvrouw'", "mees"},
+        {"Wie speelde in de kinderreeks 'Samson en Gert' de rol van Alberto'","Koen Crucke"},
+        {"Van welk Japans automerk zijn de Verso en de Carina gekende modellen?","Toyata"},
+        {"Wie regiseerde de film Saving Private Ryan?","Steven Spielberg"},
+        {"Welke maand ligt zowel in de herfst als in de winter?","December"},
+        {"Welke bank gebruikt een oranje leeuw in haar publiciteit?","ING"}
+    };
     private HTextButton btnPlayNewGame, btnHighscores, btnHowToPlay;
     
     private Sprite background;
