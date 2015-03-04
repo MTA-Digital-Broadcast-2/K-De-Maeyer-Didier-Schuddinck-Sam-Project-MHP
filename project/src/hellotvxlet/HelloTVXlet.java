@@ -24,7 +24,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private boolean checkInput = false;
     private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer;
     private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
-    
+    private UserEventRepository repository;
     
     private Sprite logo, logoSmall;
     private int logoX = 100, 
@@ -82,7 +82,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         //Eventmanager aanvragen
         EventManager manager = EventManager.getInstance();
         //Repos
-        UserEventRepository repository = new UserEventRepository("Voorbeeld");
+        repository = new UserEventRepository("Voorbeeld");
         // Events toevoegen
         repository.addKey(HRcEvent.VK_A);
         repository.addKey(HRcEvent.VK_B);
@@ -110,9 +110,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         repository.addKey(HRcEvent.VK_X);
         repository.addKey(HRcEvent.VK_Y);
         repository.addKey(HRcEvent.VK_Z);
-        repository.addKey(HRcEvent.VK_SPACE);
-        repository.addKey(HRcEvent.VK_ENTER);
-        repository.addKey(HRcEvent.VK_BACK_SPACE);
+        
         //Bekend maken bij Event Manager
         manager.addUserEventListener(this, repository);
         
@@ -129,20 +127,23 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        if( e.getActionCommand() == "btnPlayNewGame_pressed" ) 
+        if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
         { 
             //laat het spelscherm zien en start het spel
             startRonde1();
+            // Pas hier toevoegen om error te vermijden in menu
+            repository.addKey(HRcEvent.VK_SPACE);
+            repository.addKey(HRcEvent.VK_ENTER);
+            repository.addKey(HRcEvent.VK_BACK_SPACE);
             System.out.println("btn Play New Game Pressed");
         }
-        else if ( e.getActionCommand() == "btnHighscores_pressed" ) 
+        else if ( e.getActionCommand().equals("btnHighscores_pressed" ))
         {
             System.out.println("btn Highscores Pressed");
         }
-        else if ( e.getActionCommand() == "btnHowToPlay_pressed" ) 
+        else if ( e.getActionCommand().equals("btnHowToPlay_pressed" ))
         {
             System.out.println("btn How To Play Pressed");
-            
             //scene.repaint(); //zorgt ervoor dat de andere knoppen ook veranderen van kleur, als je dit niet doet moeten de andere knoppen eerst de focus krijgen
         }
     }
