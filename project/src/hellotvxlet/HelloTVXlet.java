@@ -6,6 +6,7 @@ import java.awt.*;
 
 import java.awt.event.*;
 import java.util.Timer;
+import javax.swing.*;
 import org.bluray.ui.event.*;
 import org.dvb.event.*;
 import org.havi.ui.*;
@@ -19,6 +20,8 @@ public class HelloTVXlet implements Xlet, HActionListener {
     private boolean debug = true;
     
     private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime;
+    private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
+    
     
     private Sprite logo, logoSmall;
     private int logoX = 100, 
@@ -90,7 +93,7 @@ public class HelloTVXlet implements Xlet, HActionListener {
         if( e.getActionCommand() == "btnPlayNewGame_pressed" ) 
         { 
             //laat het spelscherm zien en start het spel
-            startGame();
+            startRonde2();
             System.out.println("btn Play New Game Pressed");
         }
         else if ( e.getActionCommand() == "btnHighscores_pressed" ) 
@@ -168,7 +171,7 @@ public class HelloTVXlet implements Xlet, HActionListener {
         scene.pushToBack(background);
     }
     
-    public void startGame() {
+    public void startRonde1() {
         //Remove all components from scene
         scene.removeAll();
         
@@ -185,11 +188,105 @@ public class HelloTVXlet implements Xlet, HActionListener {
         txtQuestionNumber.setFont(new Font("sans-serif", Font.PLAIN, 25));
         scene.add(txtQuestionNumber);
         
-        txtQuestion = new HStaticText("Wat weet u over Barack Obama?"); // er kunnen 40 karakters op 1 lijn
-        txtQuestion.setLocation(50, 150);
-        txtQuestion.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
-        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 30));
+        txtQuestion = new HStaticText("Van welk Japans automerk zijn de Verso en de Carina gekende modellen?"); // er kunnen 40 karakters op 1 lijn
+        txtQuestion.setHorizontalAlignment(0);          //links uitlijnen
+        txtQuestion.setLocation(25, 150);
+        txtQuestion.setSize(650, 50);
+        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 24));
         scene.add(txtQuestion);
+        
+        //LOGO
+        logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
+        scene.add(logoSmall);
+        
+        //BACKGROUND
+        scene.add(background);
+        scene.pushToBack(background);
+        
+        scene.repaint();
+    }
+    
+    public void startRonde2() {
+        //Remove all components from scene
+        scene.removeAll();
+        
+        
+        txtRound = new HStaticText("Ronde 2");
+        txtRound.setLocation(200, 50);
+        txtRound.setSize(300, 50);
+        txtRound.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtRound);
+        
+        txtQuestionNumber = new HStaticText("Vraag 1");
+        txtQuestionNumber.setLocation(200, 100);
+        txtQuestionNumber.setSize(300, 50);
+        txtQuestionNumber.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtQuestionNumber);
+        
+        //vraag
+        txtQuestion = new HStaticText("Van welk Japans automerk zijn de Verso en de Carina gekende modellen?"); // er kunnen 40 karakters op 1 lijn
+        txtQuestion.setHorizontalAlignment(0);          //links uitlijnen
+        txtQuestion.setLocation(25, 150);
+        txtQuestion.setSize(650, 50);
+        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 24));
+        scene.add(txtQuestion);
+        
+        //antwoorden
+        txtAntwoord1 = new HTextButton("antwoord 1");
+        txtAntwoord1.setBordersEnabled(false);  //geen borders
+        txtAntwoord1.setHorizontalAlignment(0); //links uitlijnen
+        txtAntwoord1.setLocation(30, 200);
+        txtAntwoord1.setSize(650, 50);
+        txtAntwoord1.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtAntwoord2 = new HTextButton("antwoord 2");
+        txtAntwoord2.setBordersEnabled(false);
+        txtAntwoord2.setHorizontalAlignment(0);
+        txtAntwoord2.setLocation(30, 250);
+        txtAntwoord2.setSize(650, 50);
+        txtAntwoord2.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtAntwoord3 = new HTextButton("antwoord 3");
+        txtAntwoord3.setBordersEnabled(false);
+        txtAntwoord3.setHorizontalAlignment(0);
+        txtAntwoord3.setLocation(30, 300);
+        txtAntwoord3.setSize(650, 50);
+        txtAntwoord3.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtAntwoord4 = new HTextButton("antwoord 4");
+        txtAntwoord4.setBordersEnabled(false);
+        txtAntwoord4.setHorizontalAlignment(0);
+        txtAntwoord4.setLocation(30, 350);
+        txtAntwoord4.setSize(650, 50);
+        txtAntwoord4.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtAntwoord5 = new HTextButton("antwoord 5");
+        txtAntwoord5.setBordersEnabled(false);  
+        txtAntwoord5.setHorizontalAlignment(0); 
+        txtAntwoord5.setLocation(30, 400);
+        txtAntwoord5.setSize(650, 50);
+        txtAntwoord5.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtAntwoord1.setFocusTraversal((null), txtAntwoord2, null, null);
+        txtAntwoord2.setFocusTraversal(txtAntwoord1, txtAntwoord3, null, null);
+        txtAntwoord3.setFocusTraversal(txtAntwoord2, txtAntwoord4, null, null);
+        txtAntwoord4.setFocusTraversal(txtAntwoord3, txtAntwoord5, null, null);
+        txtAntwoord5.setFocusTraversal(txtAntwoord4, null, null, null);
+        
+        txtAntwoord1.addHActionListener(this);
+        txtAntwoord2.addHActionListener(this);
+        txtAntwoord3.addHActionListener(this);   
+        
+        scene.add(txtAntwoord1);
+        scene.add(txtAntwoord2);
+        scene.add(txtAntwoord3);
+        scene.add(txtAntwoord4);
+        scene.add(txtAntwoord5);
+        
+        txtAntwoord1.requestFocus();
+        
+        
+        
         
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
