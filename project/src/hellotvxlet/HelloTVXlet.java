@@ -64,7 +64,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         {"Hoeveel punten is de zwarte snookerbal waard?", "7 punten", "7 punten", "8 punten", "9 punten", "10 punten"},
         {"Hoeveel provincies telt België?", "tien", "negen", "tien", "elf", "twaalf"}
     };
-    private HTextButton btnPlayNewGame, btnHighscores, btnHowToPlay;
+    private HTextButton btnPlayNewGame, btnHowToPlay;
     
     private Sprite background;
     
@@ -163,6 +163,11 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 showHowToPlay();
                 System.out.println("btn How To Play Pressed");
             }
+            else if ( e.getActionCommand().equals("btnBack_pressed")) 
+            {
+                showHomescreen();
+                System.out.println("btn Back pressed");
+            }
             else if ( e.getActionCommand().equals("juist" )) {
                 System.out.println("juist");
             }
@@ -201,17 +206,13 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     }
     
     
-    public void showHomescreen() {
+    public void showHomescreen() {     
+        
+        scene.removeAll();
+        
         //LOGO
         logo = new Sprite("de-slimste-mens-ter-wereld-text.png", logoX, logoY);
         scene.add(logo);
-        //tekstlabel aanmaken
-        //logoText = new HStaticText("de SLIMSTE \n MENS ter wereld");
-        //logoText.setLocation(200, 50);
-        //logoText.setSize(300, 100);
-        //logoText.setFont(new Font("sans-serif", Font.PLAIN, 40));
-        
-        //scene.add(logoText);
         
         
         //BUTTONS
@@ -221,35 +222,25 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         btnPlayNewGame.setBackground(new DVBColor(0,0,0,179));
         btnPlayNewGame.setBackgroundMode(HVisible.BACKGROUND_FILL);
         
-        btnHighscores = new HTextButton("HIGHSCORES");
-        btnHighscores.setLocation(250,360);
-        btnHighscores.setSize(200,50);
-        btnHighscores.setBackground(new DVBColor(0,0,0,179));
-        btnHighscores.setBackgroundMode(HVisible.BACKGROUND_FILL);
-        
         btnHowToPlay = new HTextButton("HOW TO PLAY");
-        btnHowToPlay.setLocation(250,420);
+        btnHowToPlay.setLocation(250,360);
         btnHowToPlay.setSize(200,50);
         btnHowToPlay.setBackground(new DVBColor(0,0,0,179));
         btnHowToPlay.setBackgroundMode(HVisible.BACKGROUND_FILL);
         
-        btnPlayNewGame.setFocusTraversal((null), btnHighscores, null, null);
-        btnHighscores.setFocusTraversal(btnPlayNewGame, btnHowToPlay, null, null);
-        btnHowToPlay.setFocusTraversal(btnHighscores, null, null, null);
+        btnPlayNewGame.setFocusTraversal((null), btnHowToPlay, null, null);
+        btnHowToPlay.setFocusTraversal(btnPlayNewGame, null, null, null);
         
         btnPlayNewGame.setActionCommand("btnPlayNewGame_pressed");
-        btnHighscores.setActionCommand("btnHighscores_pressed");
         btnHowToPlay.setActionCommand("btnHowToPlay_pressed");
         
         
         btnPlayNewGame.addHActionListener(this);
-        btnHighscores.addHActionListener(this);
         btnHowToPlay.addHActionListener(this);
         
         
         //scene.add(tekstLabel);
         scene.add(btnPlayNewGame);
-        scene.add(btnHighscores);
         scene.add(btnHowToPlay);
         
         btnPlayNewGame.requestFocus();
@@ -261,41 +252,56 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         
         scene.add(background);
         scene.pushToBack(background);
+        
+        scene.repaint();
     }
     
     public void showHowToPlay() {
-        
-        HStaticText txtHowToPlay, txtRonde1_1, txtRonde1_2, txtRonde2, txtPunten, txtText;
-        
         //Remove all components from scene
         scene.removeAll();
         
-        //Uitleg ronde 1
-        txtRonde1_1 = new HStaticText("");
-        txtRonde1_1.setLocation(20, 200);
-        txtRonde1_1.setSize(650, 50);
-        txtRonde1_1.setFont(new Font("sans-serif", Font.PLAIN, 20));
-        txtRonde1_2 = new HStaticText("Als je zeker bent van je antwoord, druk dan op ENTER om je antwoord te controleren en naar de volgende vraag te gaan.");
-        txtRonde1_2.setLocation(20, 250);
-        txtRonde1_2.setSize(650, 50);
-        txtRonde1_2.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        HStaticText txtHowToPlay, txtText;
+        HTextButton btnBack;
         
+        // Titel How to play
+        txtHowToPlay = new HStaticText("How To Play");
+        txtHowToPlay.setLocation(200, 100);
+        txtHowToPlay.setSize(300, 50);
+        txtHowToPlay.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        
+        scene.add(txtHowToPlay);
+        
+        // Uitleg
         txtText = new HStaticText("De eerste ronde bestaat uit open vragen, TYP je antwoord in, met BACKSPACE kan je je \n" 
                                 + "antwoord verwijderen.Als je zeker bent van je antwoord, druk dan op ENTER om je antwoord \n" 
                                 + "te controleren en naar de volgende vraag te gaan. \n"
                                 + "Als je 8 vragen hebt beantwoord ga je naar de tweede ronde. \n\n"
                                 + "Bij de tweede ronde krijg je meerkeuze vragen met 4 antwoorden waarvan slechts \n"
                                 + "1 antwoord juist is. \n"
-                                + "");
-        txtText.setLocation(20, 150);
+                                + "Gebruik de pijltjes toetsen om een antwoord te selecteren en druk op ENTER om je \n"
+                                + "antwoord te controleren en naar de volgende vraag te gaan. \n\n"
+                                + "Per juist antwoord krijg je 20 punten, probeer zoveel mogelijk punten te scoren.");
+        txtText.setLocation(20, 160);
         txtText.setSize(680, 500);
         txtText.setFont(new Font("sans-serif", Font.PLAIN, 20));
         txtText.setHorizontalAlignment(0);
         txtText.setVerticalAlignment(0);
         
         scene.add(txtText);
-        //scene.add(txtRonde1_1);
-        //scene.add(txtRonde1_2);
+        
+        // BUTTON terug naar homepages
+        btnBack = new HTextButton("BACK TO HOME");
+        btnBack.setLocation(250,500);
+        btnBack.setSize(200,50);
+        btnBack.setBackground(new DVBColor(0,0,0,179));
+        btnBack.setBackgroundMode(HVisible.BACKGROUND_FILL);
+        
+        btnBack.setActionCommand("btnBack_pressed");
+        btnBack.addHActionListener(this);
+        
+        scene.add(btnBack);
+        
+        btnBack.requestFocus();
         
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
