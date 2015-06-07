@@ -20,10 +20,10 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private HScene scene;
     //debuggen activeren of niet?
     private boolean debug = true;
-
+    
     private boolean checkInput = false;
-    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection, txtScore;
-    private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtAnswer,txtCorrection, txtScore,txtEnd,txtSubEnd, txtHowToPlay, txtUitleg;
+    private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4;
     private UserEventRepository repository;
     private EventManager manager = EventManager.getInstance();
     private Sprite logo, logoSmall, scoreImage;
@@ -64,7 +64,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         {"Hoeveel punten is de zwarte snookerbal waard?", "7 punten", "7 punten", "8 punten", "9 punten", "10 punten"},
         {"Hoeveel provincies telt België?", "tien", "negen", "tien", "elf", "twaalf"}
     };
-    private HTextButton btnPlayNewGame, btnHowToPlay;
+    private HTextButton btnPlayNewGame, btnHowToPlay, btnBack;
     
     private Sprite background;
     
@@ -154,6 +154,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 //Bekend maken bij Event Manager
                 manager.addUserEventListener(this, repository);
                 //laat het spelscherm zien en start het spel
+                this.score = 0;
                 startRonde1();
 
                 System.out.println("btn Play New Game Pressed");
@@ -260,9 +261,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         //Remove all components from scene
         scene.removeAll();
         
-        HStaticText txtHowToPlay, txtText;
-        HTextButton btnBack;
-        
         // Titel How to play
         txtHowToPlay = new HStaticText("How To Play");
         txtHowToPlay.setLocation(200, 100);
@@ -272,7 +270,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         scene.add(txtHowToPlay);
         
         // Uitleg
-        txtText = new HStaticText("De eerste ronde bestaat uit open vragen, TYP je antwoord in, met BACKSPACE kan je je \n" 
+        txtUitleg = new HStaticText("De eerste ronde bestaat uit open vragen, TYP je antwoord in, met BACKSPACE kan je je \n" 
                                 + "antwoord verwijderen.Als je zeker bent van je antwoord, druk dan op ENTER om je antwoord \n" 
                                 + "te controleren en naar de volgende vraag te gaan. \n"
                                 + "Als je 8 vragen hebt beantwoord ga je naar de tweede ronde. \n\n"
@@ -281,13 +279,13 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                                 + "Gebruik de pijltjes toetsen om een antwoord te selecteren en druk op ENTER om je \n"
                                 + "antwoord te controleren en naar de volgende vraag te gaan. \n\n"
                                 + "Per juist antwoord krijg je 20 punten, probeer zoveel mogelijk punten te scoren.");
-        txtText.setLocation(20, 160);
-        txtText.setSize(680, 500);
-        txtText.setFont(new Font("sans-serif", Font.PLAIN, 20));
-        txtText.setHorizontalAlignment(0);
-        txtText.setVerticalAlignment(0);
+        txtUitleg.setLocation(20, 160);
+        txtUitleg.setSize(680, 500);
+        txtUitleg.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        txtUitleg.setHorizontalAlignment(0);
+        txtUitleg.setVerticalAlignment(0);
         
-        scene.add(txtText);
+        scene.add(txtUitleg);
         
         // BUTTON terug naar homepages
         btnBack = new HTextButton("BACK TO HOME");
@@ -487,7 +485,73 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         checkInput = true;
         scene.repaint();
     }
-    
+    public void endScreen()
+    {
+        this.questionCounter = 1;
+        this.userAnswer = "";
+        this.qAnswered = new boolean[10];
+        //Remove all components from scene
+        scene.removeAll();
+        
+        txtEnd = new HStaticText("Einde Spel");
+        txtEnd.setLocation(200, 50);
+        txtEnd.setSize(300, 50);
+        txtEnd.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtEnd);
+        
+        txtSubEnd = new HStaticText("Je behaalde score:");
+        txtSubEnd.setLocation(200, 100);
+        txtSubEnd.setSize(300, 50);
+        txtSubEnd.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtSubEnd);
+       
+        
+        //BUTTONS
+        btnPlayNewGame = new HTextButton("PLAY NEW GAME");
+        btnPlayNewGame.setLocation(250,300);
+        btnPlayNewGame.setSize(200,50);
+        btnPlayNewGame.setBackground(new DVBColor(0,0,0,179));
+        btnPlayNewGame.setBackgroundMode(HVisible.BACKGROUND_FILL);
+        
+        btnBack = new HTextButton("BACK TO HOME");
+        btnBack.setLocation(250,360);
+        btnBack.setSize(200,50);
+        btnBack.setBackground(new DVBColor(0,0,0,179));
+        btnBack.setBackgroundMode(HVisible.BACKGROUND_FILL);
+        
+        btnPlayNewGame.setActionCommand("btnPlayNewGame_pressed");
+        btnBack.setActionCommand("btnBack_pressed");
+        
+        btnPlayNewGame.addHActionListener(this); 
+        btnBack.addHActionListener(this);
+        
+        btnPlayNewGame.setFocusTraversal((null), btnBack, null, null);
+        btnBack.setFocusTraversal(btnPlayNewGame, null, null, null);
+        
+        scene.add(btnBack);
+        scene.add(btnPlayNewGame);
+        
+        btnPlayNewGame.requestFocus();
+        
+        //LOGO
+        logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
+        scene.add(logoSmall);
+        
+        //SCORE
+        scoreImage = new Sprite("score.png", 290, 175);
+        txtScore = new HStaticText( Integer.toString(score) );
+        txtScore.setLocation(325, 200);
+        txtScore.setSize(50, 50);
+        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtScore);
+        scene.add(scoreImage);
+        
+        
+        //BACKGROUND
+        scene.add(background);
+        scene.pushToBack(background);
+        scene.repaint();
+    }
     public void checkAnswer()
     {
         this.qAnswered[this.currentQ] = true;
@@ -608,6 +672,8 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             else
             {
                 //eindscherm
+                this.checkInput = false;
+                this.endScreen();
             }
         }
     }
@@ -717,6 +783,10 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             }
             txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
             scene.repaint();
+        }
+        else
+        {
+            System.out.println("test");
         }
     }
 
