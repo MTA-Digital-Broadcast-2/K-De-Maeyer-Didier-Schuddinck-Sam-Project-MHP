@@ -151,7 +151,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             //Bekend maken bij Event Manager
             manager.addUserEventListener(this, repository);
             //laat het spelscherm zien en start het spel
-            startRonde1();
+            startRonde2();
             
             System.out.println("btn Play New Game Pressed");
         }
@@ -163,6 +163,13 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         {
             System.out.println("btn How To Play Pressed");
             //scene.repaint(); //zorgt ervoor dat de andere knoppen ook veranderen van kleur, als je dit niet doet moeten de andere knoppen eerst de focus krijgen
+        }
+        
+        else if ( e.getActionCommand().equals("juist" )) {
+            System.out.println("juist");
+        }
+        else if ( e.getActionCommand().equals("fout" )) {
+            System.out.println("fout");
         }
     }
     
@@ -340,18 +347,22 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAntwoord1.setFocusTraversal((null), txtAntwoord2, null, null);
         txtAntwoord2.setFocusTraversal(txtAntwoord1, txtAntwoord3, null, null);
         txtAntwoord3.setFocusTraversal(txtAntwoord2, txtAntwoord4, null, null);
-        txtAntwoord4.setFocusTraversal(txtAntwoord3, txtAntwoord5, null, null);
-        txtAntwoord5.setFocusTraversal(txtAntwoord4, null, null, null);
+        txtAntwoord4.setFocusTraversal(txtAntwoord3, null, null, null);
+        
+        txtAntwoord1.setActionCommand("juist");
+        txtAntwoord2.setActionCommand("fout");
+        txtAntwoord3.setActionCommand("fout");
+        txtAntwoord4.setActionCommand("fout");
         
         txtAntwoord1.addHActionListener(this);
         txtAntwoord2.addHActionListener(this);
-        txtAntwoord3.addHActionListener(this);   
+        txtAntwoord3.addHActionListener(this);
+        txtAntwoord4.addHActionListener(this);   
         
         scene.add(txtAntwoord1);
         scene.add(txtAntwoord2);
         scene.add(txtAntwoord3);
         scene.add(txtAntwoord4);
-        scene.add(txtAntwoord5);
         
         txtAntwoord1.requestFocus();
         
