@@ -24,15 +24,18 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private boolean debug = true;
 
     private boolean checkInput = false;
-    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection, txtScore;
     private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
     private UserEventRepository repository;
     private EventManager manager = EventManager.getInstance();
-    private Sprite logo, logoSmall;
+    private Sprite logo, logoSmall, scoreImage;
     private int logoX = 100, 
                 logoY = 50,
                 logoSmallX = 20,
-                logoSmallY = 20;
+                logoSmallY = 20,
+                scoreImageX = 550,
+                scoreImageY = 20,
+                score = 0;
     
     private String userAnswer = ""; //Variabele om antwoord in bij te houden
     private int currentQ;
@@ -142,34 +145,56 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
-        { 
-            // Pas hier toevoegen om error te vermijden in menu
-            repository.addKey(HRcEvent.VK_SPACE);
-            repository.addKey(HRcEvent.VK_ENTER);
-            repository.addKey(HRcEvent.VK_BACK_SPACE);
-            //Bekend maken bij Event Manager
-            manager.addUserEventListener(this, repository);
-            //laat het spelscherm zien en start het spel
-            startRonde2();
-            
-            System.out.println("btn Play New Game Pressed");
-        }
-        else if ( e.getActionCommand().equals("btnHighscores_pressed" ))
+        if(! this.checkInput)
         {
-            System.out.println("btn Highscores Pressed");
+            if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
+            { 
+                // Pas hier toevoegen om error te vermijden in menu
+                repository.addKey(HRcEvent.VK_SPACE);
+                repository.addKey(HRcEvent.VK_ENTER);
+                repository.addKey(HRcEvent.VK_BACK_SPACE);
+                //Bekend maken bij Event Manager
+                manager.addUserEventListener(this, repository);
+                //laat het spelscherm zien en start het spel
+                startRonde1();
+
+                System.out.println("btn Play New Game Pressed");
+            }
+            else if ( e.getActionCommand().equals("btnHowToPlay_pressed" ))
+            {
+                showHowToPlay();
+                System.out.println("btn How To Play Pressed");
+            }
+
+            else if ( e.getActionCommand().equals("juist" )) {
+                System.out.println("juist");
+            }
+            else if ( e.getActionCommand().equals("fout" )) {
+                System.out.println("fout");
+            }
         }
-        else if ( e.getActionCommand().equals("btnHowToPlay_pressed" ))
+        else
         {
-            System.out.println("btn How To Play Pressed");
-            //scene.repaint(); //zorgt ervoor dat de andere knoppen ook veranderen van kleur, als je dit niet doet moeten de andere knoppen eerst de focus krijgen
-        }
-        
-        else if ( e.getActionCommand().equals("juist" )) {
-            System.out.println("juist");
-        }
-        else if ( e.getActionCommand().equals("fout" )) {
-            System.out.println("fout");
+            if( e.getActionCommand().equals("antwoord_1" ))
+            { 
+                System.out.println("antwoord_1");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_2" ))
+            {
+                System.out.println("antwoord_2");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_3" ))
+            {
+                System.out.println("antwoord_3");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_4" ))
+            {
+                System.out.println("antwoord_4");
+                this.checkAnswer();
+            }
         }
     }
     
@@ -236,6 +261,21 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         scene.pushToBack(background);
     }
     
+    public void showHowToPlay() {
+        //Remove all components from scene
+        scene.removeAll();
+        
+        //LOGO
+        logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
+        scene.add(logoSmall);
+        
+        //BACKGROUND
+        scene.add(background);
+        scene.pushToBack(background);
+        
+        scene.repaint();
+    }
+    
     public void startRonde1() {
         this.currentRound = 1;
         //Remove all components from scene
@@ -282,6 +322,15 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
         scene.add(logoSmall);
+        
+        //SCORE
+        scoreImage = new Sprite("score.png", scoreImageX, scoreImageY);
+        txtScore = new HStaticText( Integer.toString(score) );
+        txtScore.setLocation(585, 47);
+        txtScore.setSize(50, 50);
+        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtScore);
+        scene.add(scoreImage);
         
         //BACKGROUND
         scene.add(background);
@@ -349,10 +398,10 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAntwoord3.setFocusTraversal(txtAntwoord2, txtAntwoord4, null, null);
         txtAntwoord4.setFocusTraversal(txtAntwoord3, null, null, null);
         
-        txtAntwoord1.setActionCommand("juist");
-        txtAntwoord2.setActionCommand("fout");
-        txtAntwoord3.setActionCommand("fout");
-        txtAntwoord4.setActionCommand("fout");
+        txtAntwoord1.setActionCommand("antwoord_1");
+        txtAntwoord2.setActionCommand("antwoord_2");
+        txtAntwoord3.setActionCommand("antwoord_3");
+        txtAntwoord4.setActionCommand("antwoord_4");
         
         txtAntwoord1.addHActionListener(this);
         txtAntwoord2.addHActionListener(this);
@@ -370,38 +419,57 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
         scene.add(logoSmall);
         
+        //SCORE
+        scoreImage = new Sprite("score.png", scoreImageX, scoreImageY);
+        txtScore = new HStaticText( Integer.toString(score) );
+        txtScore.setLocation(585, 47);
+        txtScore.setSize(50, 50);
+        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtScore);
+        scene.add(scoreImage);
+        
+        
+        
         //BACKGROUND
         scene.add(background);
         scene.pushToBack(background);
-        
+        checkInput = true;
         scene.repaint();
     }
     
     public void checkAnswer()
     {
-        this.qAnswered[this.currentQ] = true;
-        
-        //Controle huidige vraag
-        if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
+        if(this.currentRound == 1)
         {
-            
-            txtCorrection.setForeground(new DVBColor(0,255,0,179));
-            txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
-            
+            this.qAnswered[this.currentQ] = true;
+
+            //Controle huidige vraag
+            if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
+            {
+                score += 10;
+                txtScore.setTextContent(Integer.toString(score), HState.FIRST_STATE);
+                txtCorrection.setForeground(new DVBColor(0,255,0,179));
+                txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
+
+            }
+            else
+            {
+                txtCorrection.setForeground(new DVBColor(255,0,0,179));
+                txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
+            }
+
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+
+            this.nextQuestion();
         }
-        else
+        else if(this.currentRound == 2)
         {
-            txtCorrection.setForeground(new DVBColor(255,0,0,179));
-            txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
+            System.out.println("check answer ronde 2");
         }
-        
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        
-        this.nextQuestion();  
     }
     public void nextQuestion()
     {
@@ -435,109 +503,113 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         }
     }
      public void userEventReceived(UserEvent e) {
-        if(checkInput)
+        if(this.currentRound == 1)
         {
-            if(e.getType() == KeyEvent.KEY_PRESSED)
+            if(checkInput)
             {
-                switch(e.getCode())
+                if(e.getType() == KeyEvent.KEY_PRESSED)
                 {
-                    case HRcEvent.VK_A:
-                        userAnswer += "A";
-                        break;
-                    case HRcEvent.VK_B:
-                        userAnswer += "B";
-                        break;
-                    case HRcEvent.VK_C:
-                        userAnswer += "C";
-                        break;
-                    case HRcEvent.VK_D:
-                        userAnswer += "D";
-                        break;
-                    case HRcEvent.VK_E:
-                        userAnswer += "E";
-                        break;
-                    case HRcEvent.VK_F:
-                        userAnswer += "F";
-                        break;
-                    case HRcEvent.VK_G:
-                        userAnswer += "G";
-                        break;
-                    case HRcEvent.VK_H:
-                        userAnswer += "H";
-                        break;
-                    case HRcEvent.VK_I:
-                        userAnswer += "I";
-                        break;
-                    case HRcEvent.VK_J:
-                        userAnswer += "J";
-                        break;
-                    case HRcEvent.VK_K:
-                        userAnswer += "K";
-                        break;
-                    case HRcEvent.VK_L:
-                        userAnswer += "L";
-                        break;
-                    case HRcEvent.VK_M:
-                        userAnswer += "M";
-                        break;
-                    case HRcEvent.VK_N:
-                        userAnswer += "N";
-                        break;
-                    case HRcEvent.VK_O:
-                        userAnswer += "O";
-                        break;
-                    case HRcEvent.VK_P:
-                        userAnswer += "P";
-                        break;
-                    case HRcEvent.VK_Q:
-                        userAnswer += "Q";
-                        break;
-                    case HRcEvent.VK_R:
-                        userAnswer += "R";
-                        break;
-                    case HRcEvent.VK_S:
-                        userAnswer += "S";
-                        break;
-                    case HRcEvent.VK_T:
-                        userAnswer += "T";
-                        break;
-                    case HRcEvent.VK_U:
-                        userAnswer += "U";
-                        break;
-                    case HRcEvent.VK_V:
-                        userAnswer += "V";
-                        break;
-                    case HRcEvent.VK_W:
-                        userAnswer += "W";
-                        break;
-                    case HRcEvent.VK_X:
-                        userAnswer += "X";
-                        break;
-                    case HRcEvent.VK_Y:
-                        userAnswer += "Y";
-                        break;
-                    case HRcEvent.VK_Z:
-                        userAnswer += "Y";
-                        break;
-                    case HRcEvent.VK_SPACE:
-                        userAnswer += " ";
-                        break;
-                    case HRcEvent.VK_ENTER:
-                        this.checkAnswer();
-                        break;
-                    case HRcEvent.VK_BACK_SPACE:
-                        if(userAnswer.length() > 0)
-                        {
-                            userAnswer = userAnswer.substring(0, userAnswer.length() -1);
-                        }
-                        break;
+                    switch(e.getCode())
+                    {
+                        case HRcEvent.VK_A:
+                            userAnswer += "A";
+                            break;
+                        case HRcEvent.VK_B:
+                            userAnswer += "B";
+                            break;
+                        case HRcEvent.VK_C:
+                            userAnswer += "C";
+                            break;
+                        case HRcEvent.VK_D:
+                            userAnswer += "D";
+                            break;
+                        case HRcEvent.VK_E:
+                            userAnswer += "E";
+                            break;
+                        case HRcEvent.VK_F:
+                            userAnswer += "F";
+                            break;
+                        case HRcEvent.VK_G:
+                            userAnswer += "G";
+                            break;
+                        case HRcEvent.VK_H:
+                            userAnswer += "H";
+                            break;
+                        case HRcEvent.VK_I:
+                            userAnswer += "I";
+                            break;
+                        case HRcEvent.VK_J:
+                            userAnswer += "J";
+                            break;
+                        case HRcEvent.VK_K:
+                            userAnswer += "K";
+                            break;
+                        case HRcEvent.VK_L:
+                            userAnswer += "L";
+                            break;
+                        case HRcEvent.VK_M:
+                            userAnswer += "M";
+                            break;
+                        case HRcEvent.VK_N:
+                            userAnswer += "N";
+                            break;
+                        case HRcEvent.VK_O:
+                            userAnswer += "O";
+                            break;
+                        case HRcEvent.VK_P:
+                            userAnswer += "P";
+                            break;
+                        case HRcEvent.VK_Q:
+                            userAnswer += "Q";
+                            break;
+                        case HRcEvent.VK_R:
+                            userAnswer += "R";
+                            break;
+                        case HRcEvent.VK_S:
+                            userAnswer += "S";
+                            break;
+                        case HRcEvent.VK_T:
+                            userAnswer += "T";
+                            break;
+                        case HRcEvent.VK_U:
+                            userAnswer += "U";
+                            break;
+                        case HRcEvent.VK_V:
+                            userAnswer += "V";
+                            break;
+                        case HRcEvent.VK_W:
+                            userAnswer += "W";
+                            break;
+                        case HRcEvent.VK_X:
+                            userAnswer += "X";
+                            break;
+                        case HRcEvent.VK_Y:
+                            userAnswer += "Y";
+                            break;
+                        case HRcEvent.VK_Z:
+                            userAnswer += "Y";
+                            break;
+                        case HRcEvent.VK_SPACE:
+                            userAnswer += " ";
+                            break;
+                        case HRcEvent.VK_ENTER:
+                            this.checkAnswer();
+                            break;
+                        case HRcEvent.VK_BACK_SPACE:
+                            if(userAnswer.length() > 0)
+                            {
+                                userAnswer = userAnswer.substring(0, userAnswer.length() -1);
+                            }
+                            break;
 
+                    }
                 }
+
             }
-            
+            txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
+            scene.repaint();
         }
-        txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
-        scene.repaint();
+        
         
     }
 
