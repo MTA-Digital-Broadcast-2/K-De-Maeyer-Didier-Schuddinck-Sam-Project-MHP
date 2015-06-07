@@ -13,8 +13,6 @@ import org.dvb.event.UserEventRepository;
 import org.dvb.ui.DVBColor;
 import org.havi.ui.*;
 import org.havi.ui.event.*;
-import java.util.*;
-import java.lang.*;
 
 public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
@@ -41,7 +39,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private int currentQ;
     private int questionCounter = 1;
     private int currentRound;
-    private boolean[] qAnswered = new boolean[9];
+    private boolean[] qAnswered = new boolean[10];
     private String[][] openVragen = {
         {"Welke vloeistof gebruik je zeker als je stoofvlees wilt maken","bier"},
         {"welke nationaliteit hebben de meeste mensen die op Corsica wonen ?","Frans"},
@@ -165,7 +163,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 showHowToPlay();
                 System.out.println("btn How To Play Pressed");
             }
-
             else if ( e.getActionCommand().equals("juist" )) {
                 System.out.println("juist");
             }
@@ -178,24 +175,29 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             if( e.getActionCommand().equals("antwoord_1" ))
             { 
                 System.out.println("antwoord_1");
+                this.userAnswer = this.meerkeuzeVragen[this.currentQ][2];
                 this.checkAnswer();
             }
             else if ( e.getActionCommand().equals("antwoord_2" ))
             {
                 System.out.println("antwoord_2");
+                this.userAnswer = this.meerkeuzeVragen[this.currentQ][3];
                 this.checkAnswer();
             }
             else if ( e.getActionCommand().equals("antwoord_3" ))
             {
                 System.out.println("antwoord_3");
+                this.userAnswer = this.meerkeuzeVragen[this.currentQ][4];
                 this.checkAnswer();
             }
             else if ( e.getActionCommand().equals("antwoord_4" ))
             {
                 System.out.println("antwoord_4");
+                this.userAnswer = this.meerkeuzeVragen[this.currentQ][5];
                 this.checkAnswer();
             }
         }
+        
     }
     
     
@@ -328,7 +330,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtScore = new HStaticText( Integer.toString(score) );
         txtScore.setLocation(585, 47);
         txtScore.setSize(50, 50);
-        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 30));
         scene.add(txtScore);
         scene.add(scoreImage);
         
@@ -341,6 +343,9 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
     public void startRonde2() {
         this.currentRound = 2;
+        this.questionCounter = 1;
+        this.userAnswer = "";
+        this.qAnswered = new boolean[10];
         //Remove all components from scene
         scene.removeAll();
         
@@ -357,36 +362,45 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         scene.add(txtQuestionNumber);
         
         //vraag
-        txtQuestion = new HStaticText("Van welk Japans automerk zijn de Verso en de Carina gekende modellen?"); // er kunnen 40 karakters op 1 lijn
+        int randomQ = (int) (Math.random() * this.meerkeuzeVragen.length);
+        this.currentQ = randomQ;
+        txtQuestion = new HStaticText(this.meerkeuzeVragen[this.currentQ][0]); // er kunnen 40 karakters op 1 lijn
+        currentQ = randomQ;
         txtQuestion.setHorizontalAlignment(0);          //links uitlijnen
-        txtQuestion.setLocation(25, 150);
-        txtQuestion.setSize(650, 50);
-        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 24));
+        txtQuestion.setLocation(50, 150);
+        txtQuestion.setSize(600, 50); 
+        txtQuestion.setFont(new Font("sans-serif", Font.PLAIN, 20));
         scene.add(txtQuestion);
         
+        txtCorrection = new HStaticText(" "); // er kunnen 40 karakters op 1 lijn
+        txtCorrection.setLocation(50, 400);
+        txtCorrection.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
+        txtCorrection.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtCorrection);
+        
         //antwoorden
-        txtAntwoord1 = new HTextButton("antwoord 1");
+        txtAntwoord1 = new HTextButton(this.meerkeuzeVragen[this.currentQ][2]);
         txtAntwoord1.setBordersEnabled(false);  //geen borders
         txtAntwoord1.setHorizontalAlignment(0); //links uitlijnen
         txtAntwoord1.setLocation(30, 200);
         txtAntwoord1.setSize(650, 50);
         txtAntwoord1.setFont(new Font("sans-serif", Font.PLAIN, 20));
         
-        txtAntwoord2 = new HTextButton("antwoord 2");
+        txtAntwoord2 = new HTextButton(this.meerkeuzeVragen[this.currentQ][3]);
         txtAntwoord2.setBordersEnabled(false);
         txtAntwoord2.setHorizontalAlignment(0);
         txtAntwoord2.setLocation(30, 250);
         txtAntwoord2.setSize(650, 50);
         txtAntwoord2.setFont(new Font("sans-serif", Font.PLAIN, 20));
         
-        txtAntwoord3 = new HTextButton("antwoord 3");
+        txtAntwoord3 = new HTextButton(this.meerkeuzeVragen[this.currentQ][4]);
         txtAntwoord3.setBordersEnabled(false);
         txtAntwoord3.setHorizontalAlignment(0);
         txtAntwoord3.setLocation(30, 300);
         txtAntwoord3.setSize(650, 50);
         txtAntwoord3.setFont(new Font("sans-serif", Font.PLAIN, 20));
         
-        txtAntwoord4 = new HTextButton("antwoord 4");
+        txtAntwoord4 = new HTextButton(this.meerkeuzeVragen[this.currentQ][5]);
         txtAntwoord4.setBordersEnabled(false);
         txtAntwoord4.setHorizontalAlignment(0);
         txtAntwoord4.setLocation(30, 350);
@@ -397,6 +411,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAntwoord2.setFocusTraversal(txtAntwoord1, txtAntwoord3, null, null);
         txtAntwoord3.setFocusTraversal(txtAntwoord2, txtAntwoord4, null, null);
         txtAntwoord4.setFocusTraversal(txtAntwoord3, null, null, null);
+        
         
         txtAntwoord1.setActionCommand("antwoord_1");
         txtAntwoord2.setActionCommand("antwoord_2");
@@ -439,67 +454,125 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
     public void checkAnswer()
     {
+        this.qAnswered[this.currentQ] = true;
+        
         if(this.currentRound == 1)
         {
-            this.qAnswered[this.currentQ] = true;
-
             //Controle huidige vraag
             if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
             {
-                score += 10;
+                score += 20;
                 txtScore.setTextContent(Integer.toString(score), HState.FIRST_STATE);
                 txtCorrection.setForeground(new DVBColor(0,255,0,179));
                 txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
-
+                
             }
             else
             {
                 txtCorrection.setForeground(new DVBColor(255,0,0,179));
                 txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
             }
-
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            try
+            {
+                Thread.sleep(1000);
+                txtCorrection.setTextContent("",HState.FIRST_STATE);
             }
-
+            catch(Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
             this.nextQuestion();
         }
         else if(this.currentRound == 2)
         {
-            System.out.println("check answer ronde 2");
+            //Controle huidige vraag
+            if(this.meerkeuzeVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
+            {
+                score += 20;
+                txtScore.setTextContent(Integer.toString(score), HState.FIRST_STATE);
+                txtCorrection.setForeground(new DVBColor(0,255,0,179));
+                txtCorrection.setTextContent("Vorige vraag: Goed!",HState.FIRST_STATE);
+                
+            }
+            else
+            {
+                txtCorrection.setForeground(new DVBColor(255,0,0,179));
+                txtCorrection.setTextContent("Vorige vraag: Fout!",HState.FIRST_STATE);   
+            }
+            
+            this.nextQuestion();
         }
+        
     }
     public void nextQuestion()
-    {
-        if(this.questionCounter < 8 && this.currentRound == 1)
+    {         
+        if(this.currentRound == 1)
         {
-            //Volgende vraag selecteren
-            boolean next = false;
-            int randomQ;
-            while(next == false)
+            if(this.questionCounter < 8)
             {
-                randomQ = (int) (Math.random() * openVragen.length -1);
-
-                if(this.qAnswered[randomQ] != true)
+                //Volgende vraag selecteren
+                boolean next = false;
+                int randomQ;
+                while(next == false)
                 {
-                    this.currentQ = randomQ;
-                    next = true;
+                    randomQ = (int) (Math.random() * openVragen.length -1);
+
+                    if(this.qAnswered[randomQ] != true)
+                    {
+                        this.currentQ = randomQ;
+                        next = true;
+                    }
                 }
+                System.out.println(this.currentQ);
+                //Volgende vraag weergeven
+                this.questionCounter ++;
+                txtQuestionNumber.setTextContent("Vraag " + this.questionCounter,HState.FIRST_STATE);
+                txtQuestion.setTextContent(this.openVragen[this.currentQ][0],HState.FIRST_STATE); 
+                this.userAnswer = "";
+                txtAnswer.setTextContent(this.userAnswer, HState.FIRST_STATE);
+                
             }
-            System.out.println(this.currentQ);
-            //Volgende vraag weergeven
-            this.questionCounter ++;
-            txtQuestionNumber.setTextContent("Vraag " + this.questionCounter,HState.FIRST_STATE);
-            txtQuestion.setTextContent(this.openVragen[this.currentQ][0],HState.FIRST_STATE);
-            txtCorrection.setTextContent("", HState.FIRST_STATE);
-            this.userAnswer = "";
-            txtAnswer.setTextContent(this.userAnswer, HState.FIRST_STATE);
+            else
+            {
+                this.startRonde2();
+                return;
+            }
         }
-        else
+        else if(this.currentRound == 2)
         {
-            this.startRonde2();
+            if(this.questionCounter < 8)
+            {
+                //Volgende vraag selecteren
+                boolean next = false;
+                int randomQ;
+                while(next == false)
+                {
+                    randomQ = (int) (Math.random() * this.meerkeuzeVragen.length -1);
+
+                    if(this.qAnswered[randomQ] != true)
+                    {
+                        this.currentQ = randomQ;
+                        next = true;
+                    }
+                }
+                System.out.println(this.currentQ);
+                //Volgende vraag weergeven
+                this.questionCounter ++;
+                txtQuestionNumber.setTextContent("Vraag " + this.questionCounter,HState.FIRST_STATE);
+                txtQuestion.setTextContent(this.meerkeuzeVragen[this.currentQ][0],HState.FIRST_STATE);
+                this.userAnswer = "";
+                
+                txtAntwoord1.setTextContent(this.meerkeuzeVragen[this.currentQ][2], HState.FIRST_STATE);
+                txtAntwoord2.setTextContent(this.meerkeuzeVragen[this.currentQ][3], HState.FIRST_STATE);
+                txtAntwoord3.setTextContent(this.meerkeuzeVragen[this.currentQ][4], HState.FIRST_STATE);
+                txtAntwoord4.setTextContent(this.meerkeuzeVragen[this.currentQ][5], HState.FIRST_STATE);
+                
+               
+            }
+            else
+            {
+                //eindscherm
+            }
         }
     }
      public void userEventReceived(UserEvent e) {
@@ -609,8 +682,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
             scene.repaint();
         }
-        
-        
     }
 
 }
