@@ -51,6 +51,18 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         {"Welke maand ligt zowel in de herfst als in de winter?","December"},
         {"Welke bank gebruikt een oranje leeuw in haar publiciteit?","ING"}
     };
+    private String[][] meerkeuzeVragen = {
+        {"Welke taal wordt in Zwitserland het meest gesproken?", "Duits", "Frans", "Duits", "Zwitsers", "Italiaans"},
+        {"Welke typische kleur hebben de bloemblaadjes van de papaver?", "rood", "blauw", "geel", "rood", "groen"},
+        {"Welke kleur hebben de vakbondsblaggen van het ACLVB?", "blauw", "blauw", "rood", "groen", "geel"},
+        {"Wat is het beroep van Panoramix uit de Asterix-reeks?", "druïde", "kok", "houthakker", "dorpsleider", "druïde"},
+        {"Hoeveel ogen kunnen er maximaal op één dominosteen staan?", "twaalf", "tien", "elf", "twaalf", "veertien"},
+        {"Hoeveel boeken heefteen heptagoon?", "zeven", "zes", "zeven", "acht", "negen"},
+        {"Op welke datum vieren de inwoners van de USA hun Independence Day?", "4 juli", "1 juli", "4 juli", "16 juli", "21 juli"},
+        {"In welke eeuw leefde en werkte Keizer Karel?", "16de eeuw", "13de eeuw", "14de eeuw", "15de eeuw", "16de eeuw"},
+        {"Hoeveel punten is de zwarte snookerbal waard?", "7 punten", "7 punten", "8 punten", "9 punten", "10 punten"},
+        {"Hoeveel provincies telt België?", "tien", "negen", "tien", "elf", "twaalf"}
+    };
     private HTextButton btnPlayNewGame, btnHighscores, btnHowToPlay;
     
     private Sprite background;
@@ -324,13 +336,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAntwoord4.setLocation(30, 350);
         txtAntwoord4.setSize(650, 50);
         txtAntwoord4.setFont(new Font("sans-serif", Font.PLAIN, 20));
-        
-        txtAntwoord5 = new HTextButton("antwoord 5");
-        txtAntwoord5.setBordersEnabled(false);  
-        txtAntwoord5.setHorizontalAlignment(0); 
-        txtAntwoord5.setLocation(30, 400);
-        txtAntwoord5.setSize(650, 50);
-        txtAntwoord5.setFont(new Font("sans-serif", Font.PLAIN, 20));
         
         txtAntwoord1.setFocusTraversal((null), txtAntwoord2, null, null);
         txtAntwoord2.setFocusTraversal(txtAntwoord1, txtAntwoord3, null, null);
