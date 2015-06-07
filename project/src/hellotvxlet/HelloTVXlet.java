@@ -154,6 +154,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 //Bekend maken bij Event Manager
                 manager.addUserEventListener(this, repository);
                 //laat het spelscherm zien en start het spel
+                this.score = 0;
                 startRonde1();
 
                 System.out.println("btn Play New Game Pressed");
@@ -264,8 +265,38 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     }
     
     public void showHowToPlay() {
+        
+        HStaticText txtHowToPlay, txtRonde1_1, txtRonde1_2, txtRonde2, txtPunten, txtText;
+        
         //Remove all components from scene
         scene.removeAll();
+        
+        //Uitleg ronde 1
+        txtRonde1_1 = new HStaticText("");
+        txtRonde1_1.setLocation(20, 200);
+        txtRonde1_1.setSize(650, 50);
+        txtRonde1_1.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        txtRonde1_2 = new HStaticText("Als je zeker bent van je antwoord, druk dan op ENTER om je antwoord te controleren en naar de volgende vraag te gaan.");
+        txtRonde1_2.setLocation(20, 250);
+        txtRonde1_2.setSize(650, 50);
+        txtRonde1_2.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        
+        txtText = new HStaticText("De eerste ronde bestaat uit open vragen, TYP je antwoord in, met BACKSPACE kan je je \n" 
+                                + "antwoord verwijderen.Als je zeker bent van je antwoord, druk dan op ENTER om je antwoord \n" 
+                                + "te controleren en naar de volgende vraag te gaan. \n"
+                                + "Als je 8 vragen hebt beantwoord ga je naar de tweede ronde. \n\n"
+                                + "Bij de tweede ronde krijg je meerkeuze vragen met 4 antwoorden waarvan slechts \n"
+                                + "1 antwoord juist is. \n"
+                                + "");
+        txtText.setLocation(20, 150);
+        txtText.setSize(680, 500);
+        txtText.setFont(new Font("sans-serif", Font.PLAIN, 20));
+        txtText.setHorizontalAlignment(0);
+        txtText.setVerticalAlignment(0);
+        
+        scene.add(txtText);
+        //scene.add(txtRonde1_1);
+        //scene.add(txtRonde1_2);
         
         //LOGO
         logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
@@ -492,7 +523,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         scene.add(logoSmall);
         
         //SCORE
-        scoreImage = new Sprite("score.png", scoreImageX, scoreImageY);
+        scoreImage = new Sprite("score.png", 290, 175);
         txtScore = new HStaticText( Integer.toString(score) );
         txtScore.setLocation(325, 200);
         txtScore.setSize(50, 50);
@@ -504,7 +535,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         //BACKGROUND
         scene.add(background);
         scene.pushToBack(background);
-        checkInput = true;
         scene.repaint();
     }
     public void checkAnswer()
@@ -627,6 +657,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             else
             {
                 //eindscherm
+                this.checkInput = false;
                 this.endScreen();
             }
         }
@@ -737,6 +768,10 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             }
             txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
             scene.repaint();
+        }
+        else
+        {
+            System.out.println("test");
         }
     }
 
