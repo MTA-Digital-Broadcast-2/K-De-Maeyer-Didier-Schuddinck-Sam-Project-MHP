@@ -142,27 +142,60 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     }
 
     public void actionPerformed(ActionEvent e) {
-        if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
-        { 
-            // Pas hier toevoegen om error te vermijden in menu
-            repository.addKey(HRcEvent.VK_SPACE);
-            repository.addKey(HRcEvent.VK_ENTER);
-            repository.addKey(HRcEvent.VK_BACK_SPACE);
-            //Bekend maken bij Event Manager
-            manager.addUserEventListener(this, repository);
-            //laat het spelscherm zien en start het spel
-            startRonde1();
-            
-            System.out.println("btn Play New Game Pressed");
-        }
-        else if ( e.getActionCommand().equals("btnHighscores_pressed" ))
+        if(! this.checkInput)
         {
-            System.out.println("btn Highscores Pressed");
+            if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
+            { 
+                // Pas hier toevoegen om error te vermijden in menu
+                repository.addKey(HRcEvent.VK_SPACE);
+                repository.addKey(HRcEvent.VK_ENTER);
+                repository.addKey(HRcEvent.VK_BACK_SPACE);
+                //Bekend maken bij Event Manager
+                manager.addUserEventListener(this, repository);
+                //laat het spelscherm zien en start het spel
+                startRonde2();
+
+                System.out.println("btn Play New Game Pressed");
+            }
+            else if ( e.getActionCommand().equals("btnHighscores_pressed" ))
+            {
+                System.out.println("btn Highscores Pressed");
+            }
+            else if ( e.getActionCommand().equals("btnHowToPlay_pressed" ))
+            {
+                System.out.println("btn How To Play Pressed");
+                //scene.repaint(); //zorgt ervoor dat de andere knoppen ook veranderen van kleur, als je dit niet doet moeten de andere knoppen eerst de focus krijgen
+            }
+
+            else if ( e.getActionCommand().equals("juist" )) {
+                System.out.println("juist");
+            }
+            else if ( e.getActionCommand().equals("fout" )) {
+                System.out.println("fout");
+            }
         }
-        else if ( e.getActionCommand().equals("btnHowToPlay_pressed" ))
+        else
         {
-            System.out.println("btn How To Play Pressed");
-            //scene.repaint(); //zorgt ervoor dat de andere knoppen ook veranderen van kleur, als je dit niet doet moeten de andere knoppen eerst de focus krijgen
+            if( e.getActionCommand().equals("antwoord_1" ))
+            { 
+                System.out.println("antwoord_1");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_2" ))
+            {
+                System.out.println("antwoord_2");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_3" ))
+            {
+                System.out.println("antwoord_3");
+                this.checkAnswer();
+            }
+            else if ( e.getActionCommand().equals("antwoord_4" ))
+            {
+                System.out.println("antwoord_4");
+                this.checkAnswer();
+            }
         }
     }
     
@@ -340,18 +373,22 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAntwoord1.setFocusTraversal((null), txtAntwoord2, null, null);
         txtAntwoord2.setFocusTraversal(txtAntwoord1, txtAntwoord3, null, null);
         txtAntwoord3.setFocusTraversal(txtAntwoord2, txtAntwoord4, null, null);
-        txtAntwoord4.setFocusTraversal(txtAntwoord3, txtAntwoord5, null, null);
-        txtAntwoord5.setFocusTraversal(txtAntwoord4, null, null, null);
+        txtAntwoord4.setFocusTraversal(txtAntwoord3, null, null, null);
+        
+        txtAntwoord1.setActionCommand("antwoord_1");
+        txtAntwoord2.setActionCommand("antwoord_2");
+        txtAntwoord3.setActionCommand("antwoord_3");
+        txtAntwoord4.setActionCommand("antwoord_4");
         
         txtAntwoord1.addHActionListener(this);
         txtAntwoord2.addHActionListener(this);
-        txtAntwoord3.addHActionListener(this);   
+        txtAntwoord3.addHActionListener(this);
+        txtAntwoord4.addHActionListener(this);   
         
         scene.add(txtAntwoord1);
         scene.add(txtAntwoord2);
         scene.add(txtAntwoord3);
         scene.add(txtAntwoord4);
-        scene.add(txtAntwoord5);
         
         txtAntwoord1.requestFocus();
         
@@ -362,35 +399,42 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         //BACKGROUND
         scene.add(background);
         scene.pushToBack(background);
-        
+        checkInput = true;
         scene.repaint();
     }
     
     public void checkAnswer()
     {
-        this.qAnswered[this.currentQ] = true;
-        
-        //Controle huidige vraag
-        if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
+        if(this.currentRound == 1)
         {
-            
-            txtCorrection.setForeground(new DVBColor(0,255,0,179));
-            txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
-            
+            this.qAnswered[this.currentQ] = true;
+
+            //Controle huidige vraag
+            if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
+            {
+
+                txtCorrection.setForeground(new DVBColor(0,255,0,179));
+                txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
+
+            }
+            else
+            {
+                txtCorrection.setForeground(new DVBColor(255,0,0,179));
+                txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
+            }
+
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+
+            this.nextQuestion();
         }
-        else
+        else if(this.currentRound == 2)
         {
-            txtCorrection.setForeground(new DVBColor(255,0,0,179));
-            txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
+            System.out.println("check answer ronde 2");
         }
-        
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        
-        this.nextQuestion();  
     }
     public void nextQuestion()
     {
@@ -424,109 +468,113 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         }
     }
      public void userEventReceived(UserEvent e) {
-        if(checkInput)
+        if(this.currentRound == 1)
         {
-            if(e.getType() == KeyEvent.KEY_PRESSED)
+            if(checkInput)
             {
-                switch(e.getCode())
+                if(e.getType() == KeyEvent.KEY_PRESSED)
                 {
-                    case HRcEvent.VK_A:
-                        userAnswer += "A";
-                        break;
-                    case HRcEvent.VK_B:
-                        userAnswer += "B";
-                        break;
-                    case HRcEvent.VK_C:
-                        userAnswer += "C";
-                        break;
-                    case HRcEvent.VK_D:
-                        userAnswer += "D";
-                        break;
-                    case HRcEvent.VK_E:
-                        userAnswer += "E";
-                        break;
-                    case HRcEvent.VK_F:
-                        userAnswer += "F";
-                        break;
-                    case HRcEvent.VK_G:
-                        userAnswer += "G";
-                        break;
-                    case HRcEvent.VK_H:
-                        userAnswer += "H";
-                        break;
-                    case HRcEvent.VK_I:
-                        userAnswer += "I";
-                        break;
-                    case HRcEvent.VK_J:
-                        userAnswer += "J";
-                        break;
-                    case HRcEvent.VK_K:
-                        userAnswer += "K";
-                        break;
-                    case HRcEvent.VK_L:
-                        userAnswer += "L";
-                        break;
-                    case HRcEvent.VK_M:
-                        userAnswer += "M";
-                        break;
-                    case HRcEvent.VK_N:
-                        userAnswer += "N";
-                        break;
-                    case HRcEvent.VK_O:
-                        userAnswer += "O";
-                        break;
-                    case HRcEvent.VK_P:
-                        userAnswer += "P";
-                        break;
-                    case HRcEvent.VK_Q:
-                        userAnswer += "Q";
-                        break;
-                    case HRcEvent.VK_R:
-                        userAnswer += "R";
-                        break;
-                    case HRcEvent.VK_S:
-                        userAnswer += "S";
-                        break;
-                    case HRcEvent.VK_T:
-                        userAnswer += "T";
-                        break;
-                    case HRcEvent.VK_U:
-                        userAnswer += "U";
-                        break;
-                    case HRcEvent.VK_V:
-                        userAnswer += "V";
-                        break;
-                    case HRcEvent.VK_W:
-                        userAnswer += "W";
-                        break;
-                    case HRcEvent.VK_X:
-                        userAnswer += "X";
-                        break;
-                    case HRcEvent.VK_Y:
-                        userAnswer += "Y";
-                        break;
-                    case HRcEvent.VK_Z:
-                        userAnswer += "Y";
-                        break;
-                    case HRcEvent.VK_SPACE:
-                        userAnswer += " ";
-                        break;
-                    case HRcEvent.VK_ENTER:
-                        this.checkAnswer();
-                        break;
-                    case HRcEvent.VK_BACK_SPACE:
-                        if(userAnswer.length() > 0)
-                        {
-                            userAnswer = userAnswer.substring(0, userAnswer.length() -1);
-                        }
-                        break;
+                    switch(e.getCode())
+                    {
+                        case HRcEvent.VK_A:
+                            userAnswer += "A";
+                            break;
+                        case HRcEvent.VK_B:
+                            userAnswer += "B";
+                            break;
+                        case HRcEvent.VK_C:
+                            userAnswer += "C";
+                            break;
+                        case HRcEvent.VK_D:
+                            userAnswer += "D";
+                            break;
+                        case HRcEvent.VK_E:
+                            userAnswer += "E";
+                            break;
+                        case HRcEvent.VK_F:
+                            userAnswer += "F";
+                            break;
+                        case HRcEvent.VK_G:
+                            userAnswer += "G";
+                            break;
+                        case HRcEvent.VK_H:
+                            userAnswer += "H";
+                            break;
+                        case HRcEvent.VK_I:
+                            userAnswer += "I";
+                            break;
+                        case HRcEvent.VK_J:
+                            userAnswer += "J";
+                            break;
+                        case HRcEvent.VK_K:
+                            userAnswer += "K";
+                            break;
+                        case HRcEvent.VK_L:
+                            userAnswer += "L";
+                            break;
+                        case HRcEvent.VK_M:
+                            userAnswer += "M";
+                            break;
+                        case HRcEvent.VK_N:
+                            userAnswer += "N";
+                            break;
+                        case HRcEvent.VK_O:
+                            userAnswer += "O";
+                            break;
+                        case HRcEvent.VK_P:
+                            userAnswer += "P";
+                            break;
+                        case HRcEvent.VK_Q:
+                            userAnswer += "Q";
+                            break;
+                        case HRcEvent.VK_R:
+                            userAnswer += "R";
+                            break;
+                        case HRcEvent.VK_S:
+                            userAnswer += "S";
+                            break;
+                        case HRcEvent.VK_T:
+                            userAnswer += "T";
+                            break;
+                        case HRcEvent.VK_U:
+                            userAnswer += "U";
+                            break;
+                        case HRcEvent.VK_V:
+                            userAnswer += "V";
+                            break;
+                        case HRcEvent.VK_W:
+                            userAnswer += "W";
+                            break;
+                        case HRcEvent.VK_X:
+                            userAnswer += "X";
+                            break;
+                        case HRcEvent.VK_Y:
+                            userAnswer += "Y";
+                            break;
+                        case HRcEvent.VK_Z:
+                            userAnswer += "Y";
+                            break;
+                        case HRcEvent.VK_SPACE:
+                            userAnswer += " ";
+                            break;
+                        case HRcEvent.VK_ENTER:
+                            this.checkAnswer();
+                            break;
+                        case HRcEvent.VK_BACK_SPACE:
+                            if(userAnswer.length() > 0)
+                            {
+                                userAnswer = userAnswer.substring(0, userAnswer.length() -1);
+                            }
+                            break;
 
+                    }
                 }
+
             }
-            
+            txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
+            scene.repaint();
         }
-        txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
-        scene.repaint();
+        
         
     }
 
