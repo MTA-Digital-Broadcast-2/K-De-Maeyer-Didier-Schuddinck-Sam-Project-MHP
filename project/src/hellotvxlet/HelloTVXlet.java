@@ -22,7 +22,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private boolean debug = true;
 
     private boolean checkInput = false;
-    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection, txtScore;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection, txtScore,txtEnd,txtSubEnd;
     private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
     private UserEventRepository repository;
     private EventManager manager = EventManager.getInstance();
@@ -451,7 +451,62 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         checkInput = true;
         scene.repaint();
     }
-    
+    public void endScreen()
+    {
+        this.questionCounter = 1;
+        this.userAnswer = "";
+        this.qAnswered = new boolean[10];
+        //Remove all components from scene
+        scene.removeAll();
+        
+        txtEnd = new HStaticText("Einde Spel");
+        txtEnd.setLocation(200, 50);
+        txtEnd.setSize(300, 50);
+        txtEnd.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtEnd);
+        
+        txtSubEnd = new HStaticText("Je behaalde score:");
+        txtSubEnd.setLocation(200, 100);
+        txtSubEnd.setSize(300, 50);
+        txtSubEnd.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtSubEnd);
+       
+        
+        //BUTTONS
+        btnPlayNewGame = new HTextButton("PLAY NEW GAME");
+        btnPlayNewGame.setLocation(250,300);
+        btnPlayNewGame.setSize(200,50);
+        btnPlayNewGame.setBackground(new DVBColor(0,0,0,179));
+        btnPlayNewGame.setBackgroundMode(HVisible.BACKGROUND_FILL);
+        
+        btnPlayNewGame.setActionCommand("btnPlayNewGame_pressed");
+        
+        btnPlayNewGame.addHActionListener(this);  
+        
+        scene.add(btnPlayNewGame);
+        
+        btnPlayNewGame.requestFocus();
+        
+        //LOGO
+        logoSmall = new Sprite("de-slimste-mens-ter-wereld-text-small.png", logoSmallX, logoSmallY);
+        scene.add(logoSmall);
+        
+        //SCORE
+        scoreImage = new Sprite("score.png", scoreImageX, scoreImageY);
+        txtScore = new HStaticText( Integer.toString(score) );
+        txtScore.setLocation(325, 200);
+        txtScore.setSize(50, 50);
+        txtScore.setFont(new Font("sans-serif", Font.PLAIN, 35));
+        scene.add(txtScore);
+        scene.add(scoreImage);
+        
+        
+        //BACKGROUND
+        scene.add(background);
+        scene.pushToBack(background);
+        checkInput = true;
+        scene.repaint();
+    }
     public void checkAnswer()
     {
         this.qAnswered[this.currentQ] = true;
@@ -572,6 +627,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             else
             {
                 //eindscherm
+                this.endScreen();
             }
         }
     }
