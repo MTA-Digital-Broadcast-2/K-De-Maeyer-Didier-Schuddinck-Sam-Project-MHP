@@ -13,6 +13,8 @@ import org.dvb.event.UserEventRepository;
 import org.dvb.ui.DVBColor;
 import org.havi.ui.*;
 import org.havi.ui.event.*;
+import java.util.*;
+import java.lang.*;
 
 public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
@@ -22,10 +24,10 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     private boolean debug = true;
 
     private boolean checkInput = false;
-    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer;
+    private HStaticText txtRound, txtQuestionNumber, txtQuestion, txtTime, txtAnswer,txtCorrection;
     private HTextButton txtAntwoord1, txtAntwoord2, txtAntwoord3, txtAntwoord4, txtAntwoord5;
     private UserEventRepository repository;
-    
+    private EventManager manager = EventManager.getInstance();
     private Sprite logo, logoSmall;
     private int logoX = 100, 
                 logoY = 50,
@@ -33,7 +35,8 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 logoSmallY = 20;
     
     private String userAnswer = ""; //Variabele om antwoord in bij te houden
-    private String [] currentQ = {};
+    private int currentQ;
+    private int[] qAnswered = new int[9];
     private String[][] openVragen = {
         {"Welke vloeistof gebruik je zeker als je stoofvlees wilt maken","bier"},
         {"welke nationaliteit hebben de meeste mensen die op Corsica wonen ?","Frans"},
@@ -79,8 +82,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         if(debug) System.out.println("Xlet Starten");
         //Scene zichtbaar maken
         
-        //Eventmanager aanvragen
-        EventManager manager = EventManager.getInstance();
+        
         //Repos
         repository = new UserEventRepository("Voorbeeld");
         // Events toevoegen
@@ -110,7 +112,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         repository.addKey(HRcEvent.VK_X);
         repository.addKey(HRcEvent.VK_Y);
         repository.addKey(HRcEvent.VK_Z);
-        
         //Bekend maken bij Event Manager
         manager.addUserEventListener(this, repository);
         
@@ -129,12 +130,15 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     public void actionPerformed(ActionEvent e) {
         if( e.getActionCommand().equals("btnPlayNewGame_pressed" ))
         { 
-            //laat het spelscherm zien en start het spel
-            startRonde1();
             // Pas hier toevoegen om error te vermijden in menu
             repository.addKey(HRcEvent.VK_SPACE);
             repository.addKey(HRcEvent.VK_ENTER);
             repository.addKey(HRcEvent.VK_BACK_SPACE);
+            //Bekend maken bij Event Manager
+            manager.addUserEventListener(this, repository);
+            //laat het spelscherm zien en start het spel
+            startRonde1();
+            
             System.out.println("btn Play New Game Pressed");
         }
         else if ( e.getActionCommand().equals("btnHighscores_pressed" ))
@@ -231,7 +235,7 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         
         int randomQ = (int) (Math.random() * openVragen.length);
         txtQuestion = new HStaticText(openVragen[randomQ][0]); // er kunnen 40 karakters op 1 lijn
-        currentQ = openVragen[randomQ];
+        currentQ = randomQ;
         txtQuestion.setHorizontalAlignment(0);          //links uitlijnen
         txtQuestion.setLocation(50, 150);
         txtQuestion.setSize(600, 50); 
@@ -243,6 +247,12 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
         txtAnswer.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
         txtAnswer.setFont(new Font("sans-serif", Font.PLAIN, 25));
         scene.add(txtAnswer);
+        
+        txtCorrection = new HStaticText(" "); // er kunnen 40 karakters op 1 lijn
+        txtCorrection.setLocation(50, 250);
+        txtCorrection.setSize(600, 50);   //Hoe zorgt ge ervoor da tekst links uitgelijnd wordt?
+        txtCorrection.setFont(new Font("sans-serif", Font.PLAIN, 25));
+        scene.add(txtCorrection);
         
         checkInput = true;
 
@@ -261,7 +271,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     public void startRonde2() {
         //Remove all components from scene
         scene.removeAll();
-        
         
         txtRound = new HStaticText("Ronde 2");
         txtRound.setLocation(200, 50);
@@ -353,14 +362,25 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
     
     public void checkAnswer()
     {
-        if(this.currentQ[1].toLowerCase().equals(userAnswer.toLowerCase()))
+        
+        System.out.println(this.qAnswered.length);
+        
+        if(this.openVragen[this.currentQ][1].toLowerCase().equals(userAnswer.toLowerCase()))
         {
-            System.out.println("Goed!!");
+            
+            txtCorrection.setForeground(new DVBColor(0,255,0,179));
+            txtCorrection.setTextContent("Goed!",HState.FIRST_STATE);
+            scene.repaint();
         }
         else
         {
-            System.out.println("Fout!");
-        }
+            txtCorrection.setForeground(new DVBColor(255,0,0,179));
+            txtCorrection.setTextContent("Fout!",HState.FIRST_STATE);
+            scene.repaint();
+        } 
+    }
+    public void nextQuestion()
+    {
         
     }
      public void userEventReceived(UserEvent e) {
@@ -371,111 +391,84 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
                 switch(e.getCode())
                 {
                     case HRcEvent.VK_A:
-                        System.out.println("A");
                         userAnswer += "A";
                         break;
                     case HRcEvent.VK_B:
-                        System.out.println("B");
                         userAnswer += "B";
                         break;
                     case HRcEvent.VK_C:
-                        System.out.println("C");
                         userAnswer += "C";
                         break;
                     case HRcEvent.VK_D:
-                        System.out.println("D");
                         userAnswer += "D";
                         break;
                     case HRcEvent.VK_E:
-                        System.out.println("E");
                         userAnswer += "E";
                         break;
                     case HRcEvent.VK_F:
-                        System.out.println("F");
                         userAnswer += "F";
                         break;
                     case HRcEvent.VK_G:
-                        System.out.println("G");
                         userAnswer += "G";
                         break;
                     case HRcEvent.VK_H:
-                        System.out.println("H");
                         userAnswer += "H";
                         break;
                     case HRcEvent.VK_I:
-                        System.out.println("I");
                         userAnswer += "I";
                         break;
                     case HRcEvent.VK_J:
-                        System.out.println("J");
                         userAnswer += "J";
                         break;
                     case HRcEvent.VK_K:
-                        System.out.println("K");
                         userAnswer += "K";
                         break;
                     case HRcEvent.VK_L:
-                        System.out.println("L");
                         userAnswer += "L";
                         break;
                     case HRcEvent.VK_M:
-                        System.out.println("M");
                         userAnswer += "M";
                         break;
                     case HRcEvent.VK_N:
-                        System.out.println("N");
                         userAnswer += "N";
                         break;
                     case HRcEvent.VK_O:
-                        System.out.println("O");
                         userAnswer += "O";
                         break;
                     case HRcEvent.VK_P:
-                        System.out.println("P");
                         userAnswer += "P";
                         break;
                     case HRcEvent.VK_Q:
-                        System.out.println("Q");
                         userAnswer += "Q";
                         break;
                     case HRcEvent.VK_R:
-                        System.out.println("R");
                         userAnswer += "R";
                         break;
                     case HRcEvent.VK_S:
-                        System.out.println("S");
                         userAnswer += "S";
                         break;
                     case HRcEvent.VK_T:
-                        System.out.println("T");
                         userAnswer += "T";
                         break;
                     case HRcEvent.VK_U:
-                        System.out.println("U");
                         userAnswer += "U";
                         break;
                     case HRcEvent.VK_V:
-                        System.out.println("V");
                         userAnswer += "V";
                         break;
                     case HRcEvent.VK_W:
-                        System.out.println("W");
                         userAnswer += "W";
                         break;
                     case HRcEvent.VK_X:
-                        System.out.println("X");
                         userAnswer += "X";
                         break;
                     case HRcEvent.VK_Y:
-                        System.out.println("Y");
                         userAnswer += "Y";
                         break;
                     case HRcEvent.VK_Z:
-                        System.out.println("Z");
                         userAnswer += "Y";
                         break;
                     case HRcEvent.VK_SPACE:
-                        System.out.println(" ");
                         userAnswer += " ";
                         break;
                     case HRcEvent.VK_ENTER:
@@ -492,7 +485,6 @@ public class HelloTVXlet implements Xlet, HActionListener,UserEventListener{
             }
             
         }
-        System.out.println(userAnswer);
         txtAnswer.setTextContent(userAnswer,HState.FIRST_STATE);
         scene.repaint();
         
